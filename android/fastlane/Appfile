@@ -1,0 +1,2 @@
+json_key_file("/Users/espadaraijin/development/projects/google_service_json/api-7909623858338376567-45500-5d313dba4f2c.json")# Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+package_name("my.gov.onegovappstore.ihsanmadani") # e.g. com.krausefx.app

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40.823" height="40.823" viewBox="0 0 40.823 40.823">
+  <defs>
+    <clipPath id="clip-path">
+      <path id="path1605" d="M0-682.665H40.823v40.823H0Z" transform="translate(0 682.665)"/>
+    </clipPath>
+  </defs>
+  <g id="bantuan_icon" data-name="bantuan icon" transform="translate(0 682.665)" opacity="0.86">
+    <g id="g1601" transform="translate(0 -682.665)">
+      <g id="g1603" clip-path="url(#clip-path)">
+        <g id="g1609" transform="translate(1.196 19.559)">
+          <path id="path1611" d="M-195.364-121.2h9.479a2.679,2.679,0,0,0,2.678-2.68,2.679,2.679,0,0,0-2.678-2.68h-13.437l-8.467,8.474v9.245h4.339l4.944-4.948h17.86l10.5-10.5a2.7,2.7,0,0,0-.041-3.864,2.7,2.7,0,0,0-3.779.041l-5.849,5.854h-3.931" transform="translate(207.79 128.913)" fill="none" stroke="#13097a" stroke-width="2"/>
+        </g>
+        <g id="g1613" transform="translate(11.684 1.196)">
+          <path id="path1615" d="M-252.417-20.578h0a4.469,4.469,0,0,0-6.32,0l-1.053,1.053-1.053-1.053a4.469,4.469,0,0,0-6.319,0,4.469,4.469,0,0,0,0,6.32l7.373,7.373,7.373-7.373A4.469,4.469,0,0,0-252.417-20.578Z" transform="translate(268.472 21.887)" fill="none" stroke="#ec1c24" stroke-width="2"/>
+          <path id="Path_104772" data-name="Path 104772" d="M8.674,1.827,14.16.413l2.828,3.081v3.99L8.674,14.5.069,5.16,1.585.715H5.17Z" transform="translate(0.008 0.047)" fill="#ec1c24"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

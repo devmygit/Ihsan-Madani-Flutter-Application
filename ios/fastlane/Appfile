@@ -1,0 +1,8 @@
+app_identifier("my.gov.onegovappstore.ihsanmadani") # The bundle identifier of your app
+apple_id("arifshontek17@gmail.com") # Your Apple Developer Portal username
+
+itc_team_id("122159210") # App Store Connect Team ID
+team_id("8C5T238955") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
