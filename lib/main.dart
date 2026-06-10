@@ -89,10 +89,16 @@ class MainApp extends StatelessWidget {
               // ..getCountdownTime(), // Removed - API not used
           ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
           debugShowCheckedModeBanner: false,
           initialRoute: MadaniRoutes.splashscreenRoute,
           onGenerateRoute: generatedRoute,
+          // Global safe area for edge-to-edge mode: all routes (including new pages) avoid status/navigation bar overlap.
+          builder: (context, child) {
+            return SafeArea(
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
         ),
       ),
     );

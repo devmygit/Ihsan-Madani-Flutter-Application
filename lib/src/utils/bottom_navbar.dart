@@ -43,11 +43,10 @@ class NavigationBottomBar extends StatelessWidget {
           ),
         ],
       ),
-      child: SafeArea(
-        child: Container(
-          height: 65.h,
-          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
-          child: Row(
+      child: Container(
+        height: 65.h,
+        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
+        child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: items.map((e) {
               final index = items.indexOf(e);
@@ -109,7 +108,6 @@ class NavigationBottomBar extends StatelessWidget {
             }).toList(),
           ),
         ),
-      ),
     );
   }
 }

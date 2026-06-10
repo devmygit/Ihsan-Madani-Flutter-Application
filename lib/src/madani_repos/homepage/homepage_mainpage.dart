@@ -58,8 +58,7 @@ class MainPageMadani extends StatelessWidget {
         },
         builder: (context, state) {
           return Scaffold(
-            body: SafeArea(
-              child: Stack(
+            body: Stack(
               children: [
                 LazyLoadIndexedStack(
                   index: state.index,
@@ -150,7 +149,6 @@ class MainPageMadani extends StatelessWidget {
                       ),
                 const AccessibilityContainer()
               ],
-              ),
             ),
             bottomNavigationBar: NavigationBottomBar(
               currentIndex:
