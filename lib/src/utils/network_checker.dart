@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:madani/src/utils/api_helper.dart';
 
 class NetworkChecker {
@@ -39,33 +38,17 @@ class NetworkChecker {
     }
   }
 
-  /// Check if API base URL is accessible by pinging the banner endpoint
+  /// Check if API base URL is accessible by trying fallback hosts in order
   Future<bool> isApiAccessible() async {
     try {
-      Dio dio = await HttpsConfig().getDio(
-        visitorId: null,
-        queries: {
-          'page': 0,
-          'per_page': 1,
-        },
-      );
+      final resolvedUrl = await HttpsConfig.resolveBaseApiUrl();
 
-      // Set timeout for the check (5 seconds)
-      dio.options.connectTimeout = const Duration(seconds: 5);
-      dio.options.receiveTimeout = const Duration(seconds: 5);
-
-      // Try to access banner API endpoint (lightweight check)
-      final response = await dio.get('/banners');
-
-      if (response.statusCode == 200) {
-        log('NetworkChecker: API is accessible');
+      if (resolvedUrl != null) {
+        log('NetworkChecker: API is accessible at $resolvedUrl');
         return true;
-      } else {
-        log('NetworkChecker: API returned status code ${response.statusCode}');
-        return false;
       }
-    } on DioException catch (e) {
-      log('NetworkChecker: API not accessible - ${e.type}: ${e.message}');
+
+      log('NetworkChecker: All API base URLs are not accessible');
       return false;
     } catch (e) {
       log('NetworkChecker: Error checking API accessibility - $e');

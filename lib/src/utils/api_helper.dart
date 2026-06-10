@@ -6,8 +6,82 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'app_config.dart';
 
 class HttpsConfig {
-  // Base API URL - Change this single constant to update all API calls
-  static const String baseApiUrl = 'https://ihsanmadani.primuscore.com/mobile-app/MobileAppsIM/public/api/v2';
+  static const String _apiPath = '/mobile-app/MobileAppsIM/public/api/v2';
+
+  static const List<String> _baseUrlHosts = [
+    'https://ihsanmadani.gov.my',
+    'https://ihsanmadaniv2.primuscore.com',
+    'https://ihsanmadani.primuscore.com',
+  ];
+
+  static String? _resolvedBaseApiUrl;
+  static bool _foundWorkingUrl = false;
+  static Future<String?>? _resolveFuture;
+
+  static String get baseApiUrl =>
+      _resolvedBaseApiUrl ?? '${_baseUrlHosts.last}$_apiPath';
+
+  static Future<String?> resolveBaseApiUrl() async {
+    if (_resolvedBaseApiUrl != null) {
+      return _foundWorkingUrl ? _resolvedBaseApiUrl : null;
+    }
+
+    _resolveFuture ??= _resolveBaseApiUrl();
+    return _resolveFuture;
+  }
+
+  static Future<String?> _resolveBaseApiUrl() async {
+    String? apiKey;
+    try {
+      apiKey = await AppConfig.getApiKey();
+    } catch (e) {
+      log('HttpsConfig: Error getting API key for base URL check: $e');
+    }
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      if (apiKey != null && apiKey.isNotEmpty) 'Authorization': 'Bearer $apiKey',
+    };
+
+    for (final host in _baseUrlHosts) {
+      final candidateUrl = '$host$_apiPath';
+      try {
+        final dio = Dio(
+          BaseOptions(
+            baseUrl: candidateUrl,
+            connectTimeout: const Duration(seconds: 5),
+            receiveTimeout: const Duration(seconds: 5),
+            headers: headers,
+          ),
+        );
+
+        final response = await dio.get(
+          '/banners',
+          queryParameters: {
+            'page': 0,
+            'per_page': 1,
+          },
+        );
+
+        if (response.statusCode == 200) {
+          _resolvedBaseApiUrl = candidateUrl;
+          _foundWorkingUrl = true;
+          log('HttpsConfig: Using base API URL - $candidateUrl');
+          return candidateUrl;
+        }
+
+        log('HttpsConfig: Base URL returned status ${response.statusCode} - $candidateUrl');
+      } catch (e) {
+        log('HttpsConfig: Base URL not accessible - $candidateUrl ($e)');
+      }
+    }
+
+    _resolvedBaseApiUrl = '${_baseUrlHosts.last}$_apiPath';
+    _foundWorkingUrl = false;
+    log('HttpsConfig: All base URLs failed, using fallback - $_resolvedBaseApiUrl');
+    return null;
+  }
 
   // Get full URL for logging purposes
   static String getFullUrl(String endpoint, {Map<String, dynamic>? queryParams}) {
@@ -26,6 +100,12 @@ class HttpsConfig {
     String? url,
     String? visitorId,
   }) async {
+    try {
+      await resolveBaseApiUrl();
+    } catch (e) {
+      log('Error resolving base API URL: $e');
+    }
+
     late String moduleBaseUrl;
     if (url == null) {
       moduleBaseUrl = baseApiUrl;

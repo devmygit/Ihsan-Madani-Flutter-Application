@@ -1,7 +1,7 @@
 name: madani
 description: "Ihsan MADANI is a mobile application for the Ihsan MADANI project."
 publish_to: "none"
-version: 2.0.0+100
+version: 2.0.1+102
 
 environment:
   sdk: ">=3.8.0 <4.0.0"
