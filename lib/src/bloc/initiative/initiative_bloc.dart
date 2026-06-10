@@ -96,9 +96,11 @@ class InitiativeBloc extends HydratedBloc<InitiativeEvent, InitiativeState> {
         state.copyWith(detailInitiativeStatus: DetailInitiativeStatus.initial),
       );
     } on HttpException catch (e) {
-      emit(state.copyWith(getInitiativeStatus: GetInitiativeStatus.error));
+      emit(state.copyWith(detailInitiativeStatus: DetailInitiativeStatus.error));
+      log('Error getting detail initiative $e');
     } on StateException catch (e) {
-      emit(state.copyWith(getInitiativeStatus: GetInitiativeStatus.error));
+      emit(state.copyWith(detailInitiativeStatus: DetailInitiativeStatus.error));
+      log('Error getting detail initiative $e');
     } catch (e) {
       emit(state.copyWith(detailInitiativeStatus: DetailInitiativeStatus.error));
       log('Error getting detail initiative $e');

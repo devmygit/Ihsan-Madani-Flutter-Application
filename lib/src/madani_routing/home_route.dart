@@ -73,6 +73,9 @@ class HomeRoutes implements ManagerRouter {
         page = MadaniHomePage();
         break;
       default:
+        if (MadaniRoutes.isNestedMadaniRoute(settings.name!)) {
+          return MadaniRoutes().router(settings);
+        }
         page = MadaniHomePage();
     }
 

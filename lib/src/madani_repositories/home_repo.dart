@@ -72,8 +72,8 @@ class HomeRepo {
             // Direct mapping from API response - no complex transformations
             return InitiativeModel.fromJson({
               'id': e['id']?.toString() ?? '',
-              'uuid': e['uuid'] ?? null,
-              'nid': e['nid']?.toString() ?? e['id']?.toString() ?? '',
+              'uuid': e['uuid'] ?? e['id']?.toString() ?? '',
+              'nid': e['nid']?.toString() ?? null,
               'cluster': e['category'] ?? e['button_name'] ?? '',
               'name': e['title'] ?? '',
               'description': e['description'] ?? '',

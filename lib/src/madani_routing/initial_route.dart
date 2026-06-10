@@ -18,6 +18,13 @@ class MadaniRoutes implements ManagerRouter {
   static const klusterDetailRoute = '$homeRoute/madani_kluster_detail';
   static const searchPageRoute = '$homeRoute/search_initiative';
 
+  static bool isNestedMadaniRoute(String routeName) {
+    return routeName == klusterDetailRoute ||
+        routeName == klusterRoute ||
+        routeName == searchPageRoute ||
+        routeName == initiativeRoute;
+  }
+
   final List<String> routeHistory = [];
 
   @override

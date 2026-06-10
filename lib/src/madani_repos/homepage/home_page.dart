@@ -139,6 +139,102 @@ class _MadaniHomePageState extends State<MadaniHomePage> {
     });
   }
 
+  Future<void> _openPopularSearchDetail(
+    BuildContext context,
+    InitiativeModel inisiatif,
+    String categoryName,
+  ) async {
+    try {
+      if (inisiatif.name.isEmpty) {
+        log('LOGAPP HOMEPAGE: Cannot open detail - empty title');
+        return;
+      }
+
+      if (!context.mounted) {
+        return;
+      }
+
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) {
+          return const AlertDialog(
+            content: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 20),
+                Text('Loading...'),
+              ],
+            ),
+          );
+        },
+      );
+
+      String articleId = inisiatif.detailArticleId;
+      if (inisiatif.needsDetailIdResolve) {
+        articleId = await InitiativeRepo().resolveDetailArticleId(inisiatif);
+      }
+
+      if (articleId.isEmpty) {
+        throw StateError('Empty article id for ${inisiatif.name}');
+      }
+
+      log(
+        'LOGAPP HOMEPAGE: Opening article detail - UUID: ${inisiatif.uuid}, '
+        'nid: ${inisiatif.nid}, id: ${inisiatif.id}, '
+        'Using: $articleId',
+      );
+
+      if (!context.mounted) {
+        return;
+      }
+
+      Navigator.of(context, rootNavigator: true).pop();
+
+      context.read<InitiativeBloc>().add(
+            GetInitiativeDetails(articleId),
+          );
+
+      final arguments = {
+        'appBarTitle': 'Inisiatif',
+        'category': categoryName,
+        'fromHomepage': true,
+      };
+
+      final homeStartPageState =
+          context.findAncestorStateOfType<HomeStartPageState>();
+      if (homeStartPageState != null && homeStartPageState.mounted) {
+        Navigator.of(homeStartPageState.context).pushNamed(
+          MadaniRoutes.klusterDetailRoute,
+          arguments: arguments,
+        );
+      } else {
+        Navigator.of(context).pushNamed(
+          MadaniRoutes.klusterDetailRoute,
+          arguments: arguments,
+        );
+      }
+    } catch (e) {
+      log('Error navigating to popular search detail: $e');
+      if (context.mounted) {
+        if (Navigator.of(context, rootNavigator: true).canPop()) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                'Gagal memuatkan kandungan. Sila cuba lagi.',
+                style: TextStyleMadani.textStyle.interText
+                    .copyWith(color: MadaniColor.white),
+              ),
+            ),
+          );
+      }
+    }
+  }
+
   void _startInfographicAutoScroll(int infographicCount) {
     _infographicTimer?.cancel();
     if (infographicCount <= 1) return;
@@ -835,51 +931,11 @@ class _MadaniHomePageState extends State<MadaniHomePage> {
                                                 padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
                                                 child: InkWell(
                                                   onTap: () {
-                                                    // Use nid if available, otherwise use id
-                                                    final id = (inisiatif.nid != null && inisiatif.nid!.isNotEmpty) 
-                                                        ? inisiatif.nid! 
-                                                        : inisiatif.id;
-                                                    
-                                                    print('LOGAPP HOMEPAGE: Opening article detail - UUID: ${inisiatif.uuid}, nid: ${inisiatif.nid}, id: ${inisiatif.id}, Using: $id');
-                                                    
-                                                    context
-                                                        .read<InitiativeBloc>()
-                                                        .add(GetInitiativeDetails(id));
-
-                                                    // Use HomeStartPage navigator explicitly to ensure detail page is pushed to correct navigator
-                                                    try {
-                                                      final homeStartPageState = context.findAncestorStateOfType<HomeStartPageState>();
-                                                      if (homeStartPageState != null && homeStartPageState.mounted) {
-                                                        Navigator.of(homeStartPageState.context).pushNamed(
-                                                          MadaniRoutes.klusterDetailRoute,
-                                                          arguments: {
-                                                            'appBarTitle': 'Inisiatif',
-                                                            'category': categoryName,
-                                                            'fromHomepage': true, // Flag to indicate navigation from homepage
-                                                          },
-                                                        );
-                                                      } else {
-                                                        // Fallback to default navigator if HomeStartPageState not found
-                                                        Navigator.of(context).pushNamed(
-                                                          MadaniRoutes.klusterDetailRoute,
-                                                          arguments: {
-                                                            'appBarTitle': 'Inisiatif',
-                                                            'category': categoryName,
-                                                            'fromHomepage': true,
-                                                          },
-                                                        );
-                                                      }
-                                                    } catch (e) {
-                                                      // Fallback to default navigator if error
-                                                      Navigator.of(context).pushNamed(
-                                                        MadaniRoutes.klusterDetailRoute,
-                                                        arguments: {
-                                                          'appBarTitle': 'Inisiatif',
-                                                          'category': categoryName,
-                                                          'fromHomepage': true,
-                                                        },
-                                                      );
-                                                    }
+                                                    _openPopularSearchDetail(
+                                                      context,
+                                                      inisiatif,
+                                                      categoryName,
+                                                    );
                                                   },
                                                   child: Container(
                                                     width: MediaQuery.sizeOf(context).width,
@@ -1044,25 +1100,11 @@ class _MadaniHomePageState extends State<MadaniHomePage> {
                                                   if (currentIndex < state.popularSearches.data.length) {
                                                     final inisiatif = state.popularSearches.data[currentIndex];
                                                     final categoryName = inisiatif.urlButtonName ?? 'Umum';
-                                                    final id = (inisiatif.nid != null && inisiatif.nid!.isNotEmpty)
-                                                        ? inisiatif.nid!
-                                                        : inisiatif.id;
-                                                    context.read<InitiativeBloc>().add(GetInitiativeDetails(id));
-                                                    try {
-                                                      final homeStartPageState = context.findAncestorStateOfType<HomeStartPageState>();
-                                                      if (homeStartPageState != null && homeStartPageState.mounted) {
-                                                        Navigator.of(homeStartPageState.context).pushNamed(
-                                                          MadaniRoutes.klusterDetailRoute,
-                                                          arguments: {
-                                                            'appBarTitle': 'Inisiatif',
-                                                            'category': categoryName,
-                                                            'fromHomepage': true,
-                                                          },
-                                                        );
-                                                      }
-                                                    } catch (e) {
-                                                      log('Error navigating to detail: $e');
-                                                    }
+                                                    _openPopularSearchDetail(
+                                                      context,
+                                                      inisiatif,
+                                                      categoryName,
+                                                    );
                                                   }
                                                 },
                                                 borderRadius: BorderRadius.circular(50),

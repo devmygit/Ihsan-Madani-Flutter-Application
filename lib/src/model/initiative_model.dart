@@ -8,6 +8,8 @@ part 'initiative_model.g.dart';
 
 @freezed
 abstract class InitiativeModel with _$InitiativeModel {
+  const InitiativeModel._();
+
   const factory InitiativeModel({
     required String id,
     required String cluster,
@@ -76,4 +78,17 @@ abstract class InitiativeModel with _$InitiativeModel {
 
   factory InitiativeModel.fromJson(Map<String, dynamic> json) =>
       _$InitiativeModelFromJson(json);
+
+  /// ID untuk API `/articles/{id}` — sama logic dengan senarai inisiatif.
+  String get detailArticleId {
+    if (nid != null && nid!.isNotEmpty) {
+      return nid!;
+    }
+    return id;
+  }
+
+  /// Popular-searches API kadang return id sequence (1,2,3...) tanpa nid/uuid.
+  bool get needsDetailIdResolve =>
+      (nid == null || nid!.isEmpty) &&
+      (uuid == null || uuid!.isEmpty);
 }

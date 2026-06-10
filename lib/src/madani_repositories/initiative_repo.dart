@@ -232,4 +232,82 @@ class InitiativeRepo {
       throw HttpException(message: e.toString(), data: st);
     }
   }
+
+  /// Resolve article ID for `/articles/{id}` when source data has no nid/uuid
+  /// (e.g. `/popular-searches` returns sequence ids that return HTTP 409).
+  Future<String> resolveDetailArticleId(InitiativeModel initiative) async {
+    try {
+      if (initiative.nid != null && initiative.nid!.isNotEmpty) {
+        return initiative.nid!;
+      }
+
+      final normalizedTitle = initiative.name.trim().toLowerCase();
+      final cluster = _resolveClusterShortName(initiative);
+
+      if (cluster.isNotEmpty) {
+        final clusterResults = await getIndexInitiative(
+          cluster: cluster,
+          search: initiative.name,
+          page: 0,
+        );
+
+        for (final item in clusterResults.data) {
+          if (item.name.trim().toLowerCase() == normalizedTitle) {
+            if (item.nid != null && item.nid!.isNotEmpty) {
+              print('LOGAPP REPO: Resolved detail id via cluster/$cluster nid=${item.nid}');
+              return item.nid!;
+            }
+            if (item.id.isNotEmpty) {
+              print('LOGAPP REPO: Resolved detail id via cluster/$cluster id=${item.id}');
+              return item.id;
+            }
+          }
+        }
+      }
+
+      final searchResults =
+          await searchArticlesByKeyword(keyword: initiative.name);
+
+      for (final item in searchResults.data) {
+        if (item.name.trim().toLowerCase() == normalizedTitle) {
+          print('LOGAPP REPO: Resolved detail id via search id=${item.detailArticleId}');
+          return item.detailArticleId;
+        }
+      }
+
+      throw HttpException(
+        message: 'Article not found for title: ${initiative.name}',
+      );
+    } on HttpException catch (e) {
+      log('Error resolving detail article id $e');
+      rethrow;
+    } catch (e, st) {
+      log('Error resolving detail article id $e');
+      throw HttpException(message: e.toString(), data: st);
+    }
+  }
+
+  String _resolveClusterShortName(InitiativeModel initiative) {
+    try {
+      final url = initiative.url;
+      if (url != null && url.isNotEmpty) {
+        final uri = Uri.tryParse(url);
+        if (uri != null) {
+          final segments = uri.pathSegments;
+          final index = segments.indexOf('inisiatif');
+          if (index >= 0 && index + 1 < segments.length) {
+            return segments[index + 1].toLowerCase();
+          }
+        }
+      }
+
+      final category = (initiative.urlButtonName ?? initiative.cluster).trim();
+      if (category.isNotEmpty) {
+        return category.toLowerCase();
+      }
+    } catch (e) {
+      log('Error resolving cluster short name $e');
+    }
+    return '';
+  }
 }

@@ -112,9 +112,21 @@ class $AssetsImagesGen {
   SvgGenImage get arrowClose =>
       const SvgGenImage('assets/images/arrow-close.svg');
 
+  /// File path: assets/images/arrow-left.svg
+  SvgGenImage get arrowLeft =>
+      const SvgGenImage('assets/images/arrow-left.svg');
+
   /// File path: assets/images/arrow-open.svg
   SvgGenImage get arrowOpen =>
       const SvgGenImage('assets/images/arrow-open.svg');
+
+  /// File path: assets/images/arrow-right.svg
+  SvgGenImage get arrowRight =>
+      const SvgGenImage('assets/images/arrow-right.svg');
+
+  /// File path: assets/images/bantuan-icon.svg
+  SvgGenImage get bantuanIcon =>
+      const SvgGenImage('assets/images/bantuan-icon.svg');
 
   /// File path: assets/images/btn-back.svg
   SvgGenImage get btnBack => const SvgGenImage('assets/images/btn-back.svg');
@@ -159,8 +171,15 @@ class $AssetsImagesGen {
   SvgGenImage get contentSyarat =>
       const SvgGenImage('assets/images/content-syarat.svg');
 
+  /// File path: assets/images/go-up.svg
+  SvgGenImage get goUp => const SvgGenImage('assets/images/go-up.svg');
+
   /// File path: assets/images/icon-maps.svg
   SvgGenImage get iconMaps => const SvgGenImage('assets/images/icon-maps.svg');
+
+  /// File path: assets/images/ihsan-madani-app-icon.png
+  AssetGenImage get ihsanMadaniAppIcon =>
+      const AssetGenImage('assets/images/ihsan-madani-app-icon.png');
 
   /// File path: assets/images/ihsan-madani-portal-logo.png
   AssetGenImage get ihsanMadaniPortalLogo =>
@@ -169,6 +188,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/ihsan-madani-portal.png
   AssetGenImage get ihsanMadaniPortal =>
       const AssetGenImage('assets/images/ihsan-madani-portal.png');
+
+  /// File path: assets/images/im-icon-apps.png
+  AssetGenImage get imIconApps =>
+      const AssetGenImage('assets/images/im-icon-apps.png');
 
   /// File path: assets/images/logo-naccol.png
   AssetGenImage get logoNaccol =>
@@ -228,7 +251,10 @@ class $AssetsImagesGen {
     jataNegaraSvg,
     malaysiaMadani,
     arrowClose,
+    arrowLeft,
     arrowOpen,
+    arrowRight,
+    bantuanIcon,
     btnBack,
     contentAgensiAktif,
     contentAgensi,
@@ -240,9 +266,12 @@ class $AssetsImagesGen {
     contentSasar,
     contentSyaratAktif,
     contentSyarat,
+    goUp,
     iconMaps,
+    ihsanMadaniAppIcon,
     ihsanMadaniPortalLogo,
     ihsanMadaniPortal,
+    imIconApps,
     logoNaccol,
     menuInisiatifActive,
     menuInisiatif,

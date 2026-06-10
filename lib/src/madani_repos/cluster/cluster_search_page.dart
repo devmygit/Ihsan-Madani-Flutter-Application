@@ -591,10 +591,7 @@ class _SearchPageState extends State<SearchPage>
                                         description: data.description,
                                         categoryColor: categoryColor,
                                         onTap: () {
-                                          // Use nid if available, otherwise use id
-                                          final id = (data.nid != null && data.nid!.isNotEmpty) 
-                                              ? data.nid! 
-                                              : data.id;
+                                          final id = data.detailArticleId;
                                           if (id.isNotEmpty) {
                                             context
                                                 .read<InitiativeBloc>()

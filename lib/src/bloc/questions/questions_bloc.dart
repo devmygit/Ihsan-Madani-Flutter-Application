@@ -602,7 +602,7 @@ class QuestionsBloc extends HydratedBloc<QuestionsEvent, QuestionsState> {
           // Map article to InitiativeModel format
           return InitiativeModel.fromJson({
             'id': article['id']?.toString() ?? '',
-            'uuid': article['id']?.toString() ?? '',
+            'uuid': article['uuid'] ?? article['id']?.toString() ?? '',
             'nid': article['nid']?.toString() ?? null, // Map nid from API if available
             'cluster': event.kategori, // Use kategori from event
             'name': article['title'] ?? '',

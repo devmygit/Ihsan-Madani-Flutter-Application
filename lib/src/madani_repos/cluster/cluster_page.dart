@@ -875,10 +875,10 @@ class _ClusterPageState extends State<ClusterPage> {
                                   description: data.description,
                                   categoryColor: categoryColor,
                                   onTap: () {
-                                    // Use nid if available, otherwise use id
-                                    final id = (data.nid != null && data.nid!.isNotEmpty) 
-                                        ? data.nid! 
-                                        : data.id;
+                                    final id = data.detailArticleId;
+                                    if (id.isEmpty) {
+                                      return;
+                                    }
                                     context
                                         .read<InitiativeBloc>()
                                         .add(GetInitiativeDetails(id));

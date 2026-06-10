@@ -700,10 +700,10 @@ class _ResultPageState extends State<ResultPage> {
                               description: result.description,
                               categoryColor: categoryColor,
                               onTap: () {
-                                // Use nid if available, otherwise use id
-                                final id = (result.nid != null && result.nid!.isNotEmpty) 
-                                    ? result.nid! 
-                                    : result.id;
+                                final id = result.detailArticleId;
+                                if (id.isEmpty) {
+                                  return;
+                                }
                                 context.read<InitiativeBloc>().add(
                                       GetInitiativeDetails(id),
                                     );
@@ -1240,25 +1240,29 @@ class ResultCluster extends StatelessWidget {
                   title: results[i].name,
                   description: results[i].description,
                   onPressed: () {
-                    // Use nid if available, otherwise use id
-                    final id = (results[i].nid != null && results[i].nid!.isNotEmpty) 
-                        ? results[i].nid! 
-                        : results[i].id;
+                    final id = results[i].detailArticleId;
+                    if (id.isEmpty) {
+                      return;
+                    }
                     context
                         .read<InitiativeBloc>()
                         .add(GetInitiativeDetails(id));
 
-                    if (context.read<InitiativeBloc>().state.status ==
-                        InitiativeStatus.initial) {
-                      final displayClusterName = _isMainCluster(results[i].cluster) 
-                          ? results[i].cluster 
-                          : 'Utama';
-                      Navigator.of(context).pushNamed(
-                          MadaniRoutes.klusterDetailRoute,
-                          arguments: {
-                            'appBarTitle': displayClusterName,
-                          });
-                    }
+                    final displayClusterName = _isMainCluster(results[i].cluster)
+                        ? results[i].cluster
+                        : 'Utama';
+                    final categoryName = displayClusterName.isNotEmpty
+                        ? displayClusterName[0].toUpperCase() +
+                            displayClusterName.substring(1).toLowerCase()
+                        : displayClusterName;
+
+                    Navigator.of(context, rootNavigator: true).pushNamed(
+                        MadaniRoutes.klusterDetailRoute,
+                        arguments: {
+                          'appBarTitle': displayClusterName,
+                          'category': categoryName,
+                          'fromResultPage': true,
+                        });
                   },
                 );
               },

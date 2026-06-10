@@ -270,6 +270,22 @@ class _ClusterDetailsPageState extends State<ClusterDetailsPage> {
                     if (initiativeState.detailInitiativeStatus == DetailInitiativeStatus.loading) {
                       return const Center(child: CircularProgressIndicator());
                     }
+
+                    if (initiativeState.detailInitiativeStatus == DetailInitiativeStatus.error) {
+                      return Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(24.w),
+                          child: Text(
+                            'Gagal memuatkan kandungan. Sila cuba lagi.',
+                            textAlign: TextAlign.center,
+                            style: TextStyleMadani.textStyle.interText.copyWith(
+                              fontSize: 16.sp,
+                              color: MadaniColor.black,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
                     
                     final rawClusterName = initiativeState.initiativeDetail.cluster.isNotEmpty
                         ? initiativeState.initiativeDetail.cluster
