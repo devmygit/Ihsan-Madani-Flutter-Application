@@ -56,6 +56,40 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     return 'android';
   }
 
+  bool _isUpdateRequired(String currentVersion, String remoteVersion) {
+    if (remoteVersion.trim().isEmpty) return false;
+
+    // Clean strings (remove leading 'v'/'V', build number suffixes like +1, or pre-release tags like -beta)
+    String cleanCurrent = currentVersion
+        .split('+')[0]
+        .split('-')[0]
+        .replaceAll(RegExp(r'^[vV]'), '')
+        .trim();
+    String cleanRemote = remoteVersion
+        .split('+')[0]
+        .split('-')[0]
+        .replaceAll(RegExp(r'^[vV]'), '')
+        .trim();
+
+    List<int> currentParts =
+        cleanCurrent.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+    List<int> remoteParts =
+        cleanRemote.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+
+    int maxLength = currentParts.length > remoteParts.length
+        ? currentParts.length
+        : remoteParts.length;
+
+    for (int i = 0; i < maxLength; i++) {
+      int c = i < currentParts.length ? currentParts[i] : 0;
+      int r = i < remoteParts.length ? remoteParts[i] : 0;
+
+      if (r > c) return true; // Remote is newer, update required
+      if (r < c) return false; // App is newer than remote, no update required
+    }
+    return false; // Same version
+  }
+
   Future<void> _checkVersionAndNavigate() async {
     try {
       // Step 1: Check network connectivity and API accessibility
@@ -88,13 +122,17 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       );
       Response response = await dio.get('/version/$platform');
 
-      if (response.statusCode == 200 && response.data['status'] == 'success') {
-        String apiVersion = response.data['data']['version'] ?? '';
-        String downloadUrl = response.data['data']['download_url'] ?? '';
+      if (response.statusCode == 200 &&
+          response.data is Map &&
+          response.data['status'] == 'success' &&
+          response.data['data'] is Map) {
+        final data = response.data['data'] as Map;
+        String apiVersion = data['version']?.toString() ?? '';
+        String downloadUrl = data['download_url']?.toString() ?? '';
         log('API version: $apiVersion');
 
-        // Compare versions
-        if (appVersion != apiVersion) {
+        // Compare versions using smart semantic version check
+        if (apiVersion.isNotEmpty && _isUpdateRequired(appVersion, apiVersion)) {
           // Show dialog to update
           if (mounted) {
             _showUpdateDialog(context, downloadUrl);
